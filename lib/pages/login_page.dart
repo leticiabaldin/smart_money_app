@@ -14,12 +14,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.symmetric(
-          vertical: 140,
+          vertical: 80,
           horizontal: 24,
         ),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Image(
               image: AssetImage("lib/assets/images/login_page_image.png"),
@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 30),
             TextField(
               decoration: InputDecoration(
                 labelText: 'Senha',
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.maxFinite,
               height: 52,
@@ -158,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
