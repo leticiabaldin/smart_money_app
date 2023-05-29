@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money_app/pages/create_account_page.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -106,9 +106,10 @@ class _LoginPageState extends State<LoginPage> {
                   fontSize: 18,
                   color: Colors.grey,
                 ),
-                suffixIcon: const Icon(
-                  Icons.remove_red_eye_rounded,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.remove_red_eye_rounded),
                   color: Colors.grey,
+                  onPressed: () {},
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
@@ -145,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
               width: double.maxFinite,
               height: 52,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => context.go('/homePage'),
                 style: ElevatedButton.styleFrom(
                     alignment: Alignment.center,
                     backgroundColor: Colors.deepPurpleAccent),
@@ -169,13 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const CreateAccountPage(),
-                      ),
-                    );
-                  },
+                  onPressed: () => context.go('/createAccountPage'),
                   child: const Text(
                     'Clique aqui!',
                     style: TextStyle(

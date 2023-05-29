@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money_app/pages/login_page.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(
-            vertical: 80,
+            vertical: 72,
             horizontal: 24,
           ),
           child: Column(
@@ -24,20 +24,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      );
-                    },
+                    onPressed: () => context.go('/'),
                     icon: const Icon(Icons.arrow_back_outlined, size: 32),
                   ),
                 ],
               ),
               const Image(
                 image: AssetImage("lib/assets/images/login_page_image.png"),
-                height: 110,
+                height: 120,
               ),
               const SizedBox(
                 height: 16,
@@ -144,9 +138,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     fontSize: 18,
                     color: Colors.grey,
                   ),
-                  suffixIcon: const Icon(
-                    Icons.remove_red_eye_rounded,
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.remove_red_eye_rounded),
                     color: Colors.grey,
+                    onPressed: () {},
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
@@ -204,7 +199,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 children: const [
                   Image(
                       image: AssetImage("lib/assets/images/credit_card.png"),
-                      height: 110),
+                      height: 120),
                 ],
               ),
             ],
