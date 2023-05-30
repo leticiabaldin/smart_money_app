@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_money_app/widgets/modal_home_values.dart';
+
+import '../assets/colors/colors_smart_money.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -9,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +20,7 @@ class _HomePageState extends State<HomePage> {
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
           elevation: 6,
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: AppColors.purpleApp,
           leading: Container(
             margin: const EdgeInsets.only(left: 8),
             child: const CircleAvatar(
@@ -48,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                 showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
-                    return Container(
+                    return SizedBox(
                       height: 240,
                       child: Column(
                         children: [
@@ -59,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             alignment: Alignment.center,
                             child: const Text(
-                              'Tem certeza que deseja sair do aplicativo?',
+                              'Você tem certeza que deseja sair do aplicativo?',
                               style: TextStyle(
                                 fontSize: 20,
                               ),
@@ -73,15 +77,15 @@ class _HomePageState extends State<HomePage> {
                                   context.go('/');
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black12,
+                                    //backgroundColor: AppColors.greyDarkApp,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 10,
-                                      horizontal: 24,
-                                    )),
+                                      horizontal: 32,
+                                    ),),
                                 child: const Text(
                                   'Confirmar',
                                   style: TextStyle(
-                                    color: Colors.white,
+
                                     fontSize: 20,
                                   ),
                                 ),
@@ -89,10 +93,10 @@ class _HomePageState extends State<HomePage> {
                               ElevatedButton(
                                 onPressed: () => Navigator.pop(context),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
+                                    backgroundColor: AppColors.greyDarkApp,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 10,
-                                      horizontal: 24,
+                                      horizontal: 32,
                                     )),
                                 child: const Text(
                                   'Cancelar',
@@ -123,21 +127,32 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 28, horizontal: 0),
-            height: 42,
-            width: 188,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.black12,
-            ),
-            child: const Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Controle Financeiro',
-                style: TextStyle(fontSize: 16),
-              ),
+            margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 28),
+            child: Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 188,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 28, horizontal: 0),
+                  height: 42,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.greyApp,
+                  ),
+                  child: const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Controle Financeiro',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Container(
@@ -152,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                   height: 68,
                   width: 180,
                   decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: AppColors.greenApp,
                       borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -194,7 +209,7 @@ class _HomePageState extends State<HomePage> {
                   height: 68,
                   width: 180,
                   decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: AppColors.redApp,
                       borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -287,7 +302,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           const Image(
                             image:
-                                AssetImage('lib/assets/images/pig_image.png'),height: 54,
+                                AssetImage('lib/assets/images/pig_image.png'),
+                            height: 54,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,7 +338,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           const Image(
                             image:
-                            AssetImage('lib/assets/images/pig_image.png'),height: 54,
+                                AssetImage('lib/assets/images/pig_image.png'),
+                            height: 54,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +374,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           const Image(
                             image:
-                            AssetImage('lib/assets/images/money_image.png'),height: 54,
+                                AssetImage('lib/assets/images/money_image.png'),
+                            height: 54,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,7 +410,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           const Image(
                             image:
-                            AssetImage('lib/assets/images/money_image.png'),height: 54,
+                                AssetImage('lib/assets/images/money_image.png'),
+                            height: 54,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,7 +446,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           const Image(
                             image:
-                            AssetImage('lib/assets/images/pig_image.png'),height: 54,
+                                AssetImage('lib/assets/images/pig_image.png'),
+                            height: 54,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,6 +468,45 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            height: 110,
+            width: double.maxFinite,
+            child: Stack(
+              children: [
+                TextButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.purpleApp,
+                    fixedSize: const Size(180, 48),
+                    elevation: 12,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            const ModalHomeValues());
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.add,
+                        size: 34,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        'Novo valor',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

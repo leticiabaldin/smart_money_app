@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_money_app/assets/colors/colors_smart_money.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({Key? key}) : super(key: key);
@@ -181,7 +182,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
-                      backgroundColor: Colors.deepPurpleAccent),
+                      backgroundColor: AppColors.purpleApp),
                   child: const Text(
                     'Criar Conta',
                     style: TextStyle(

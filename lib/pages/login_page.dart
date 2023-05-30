@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../assets/colors/colors_smart_money.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -14,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.symmetric(
-          vertical: 80,
+          vertical: 82,
           horizontal: 24,
         ),
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -23,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const Image(
               image: AssetImage("lib/assets/images/login_page_image.png"),
-              height: 140,
+              height: 150,
             ),
             const SizedBox(
               height: 20,
@@ -149,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () => context.go('/homePage'),
                 style: ElevatedButton.styleFrom(
                     alignment: Alignment.center,
-                    backgroundColor: Colors.deepPurpleAccent),
+                    backgroundColor: AppColors.purpleApp),
                 child: const Text(
                   'Conectar',
                   style: TextStyle(
@@ -175,6 +177,8 @@ class _LoginPageState extends State<LoginPage> {
                     'Clique aqui!',
                     style: TextStyle(
                       fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.purpleApp
                     ),
                   ),
                 ),
