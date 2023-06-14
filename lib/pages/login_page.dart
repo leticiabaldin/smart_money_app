@@ -251,6 +251,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         if (formKey.currentState!.validate() ) {
                           login();
+                          context.go('/homePage');
                           //print("cliquei aqui");
                         }
                       },

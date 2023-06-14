@@ -136,19 +136,13 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 188,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 28, horizontal: 0),
-                  height: 42,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.greyApp,
-                  ),
-                  child: const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Controle Financeiro',
-                      style: TextStyle(fontSize: 16),
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.symmetric(vertical: 22),
+                  child: const Text(
+                    'Controle Financeiro',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
