@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_money_app/pages/create_account_page.dart';
 import 'package:smart_money_app/pages/home_page.dart';
@@ -5,7 +6,14 @@ import 'package:smart_money_app/pages/info_page.dart';
 import 'package:smart_money_app/pages/login_page.dart';
 import 'package:go_router/go_router.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../assets/colors/colors_smart_money.dart';
@@ -12,12 +13,21 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+
+
+  final reference = FirebaseFirestore.instance.doc(
+    'userProfile/${FirebaseAuth.instance.currentUser!.uid}',
+  ); //conexão com a collections do banco de dados
+
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final collection = FirebaseFirestore.instance.collection('userProfile');
+
   bool loading = false;
+  bool _isObscure = false;
 
   Future<void> login() async {
     if (loading) return;
@@ -38,24 +48,32 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
       );
 
-      await fireAuth.setPersistence(Persistence.LOCAL);
-
       scaffoldMessenger.clearSnackBars();
       scaffoldMessenger.showSnackBar(
-        const SnackBar(
-          content: Text('Bem vindo(a), fulano'),
+         SnackBar(
+          content: Text(
+            'Bem vindo(a), ${credentials.user!.displayName}!',
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
           behavior: SnackBarBehavior.floating,
-          duration: Duration(milliseconds: 1500),
+          duration: const Duration(milliseconds: 2000),
         ),
       );
       goToFlow();
+
+      emailController.clear();
+      passwordController.clear();
     } catch (e) {
+      //print(e);
       scaffoldMessenger.clearSnackBars();
       scaffoldMessenger.showSnackBar(
         const SnackBar(
-          content:  Text('Verifique suas credenciais ou crie uma conta.'),
+          content: Text(
+            'Verifique suas credenciais ou crie uma conta.',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
           behavior: SnackBarBehavior.floating,
-          duration:  Duration(milliseconds: 2500),
+          duration: Duration(milliseconds: 3000),
         ),
       );
     }
@@ -78,6 +96,11 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _isObscure = true;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: passwordController,
                     keyboardType: TextInputType.visiblePassword,
                     textInputAction: TextInputAction.next,
-                    obscureText: true,
+                    obscureText: _isObscure,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Este campo é obrigatório.';
@@ -210,8 +233,13 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.remove_red_eye_rounded),
+                        //_isObscure ?  Icon(Icons.remove_red_eye_rounded) : (Icon(Icons.remove_red_eye_outlined),),
                         color: Colors.grey,
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
@@ -249,9 +277,8 @@ class _LoginPageState extends State<LoginPage> {
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (formKey.currentState!.validate() ) {
+                        if (formKey.currentState!.validate()) {
                           login();
-                          context.go('/homePage');
                           //print("cliquei aqui");
                         }
                       },

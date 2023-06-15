@@ -8,10 +8,10 @@ class ModalHomeValues extends StatefulWidget {
   State<ModalHomeValues> createState() => _ModalHomeValuesState();
 }
 
-enum ValuesOption { addMoney, lostMoney }
+enum Options { addMoney, lostMoney }
 
 class _ModalHomeValuesState extends State<ModalHomeValues> {
-  ValuesOption? _optionSelected = ValuesOption.addMoney;
+  Options optionsView = Options.addMoney;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +28,9 @@ class _ModalHomeValuesState extends State<ModalHomeValues> {
             Container(
               margin: const EdgeInsets.only(
                 left: 0,
-                top: 28,
+                top: 24,
                 right: 0,
-                bottom: 8,
+                bottom: 24,
               ),
               width: 280,
               alignment: Alignment.center,
@@ -39,31 +39,38 @@ class _ModalHomeValuesState extends State<ModalHomeValues> {
                 style: TextStyle(fontSize: 18),
               ),
             ),
-            ListTile(
-              title: const Text(
-                'Entrada de dinheiro',
-                style: TextStyle(fontSize: 18),
-              ),
-              leading: Radio<ValuesOption>(
-                value: ValuesOption.addMoney,
-                groupValue: _optionSelected,
-                onChanged: (ValuesOption? value) {
-                  setState(() => _optionSelected = value);
-                },
-              ),
-            ),
-            ListTile(
-              title: const Text(
-                'Saída de dinheiro',
-                style: TextStyle(
-                  fontSize: 18,
+            Center(
+              child: SegmentedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 28,vertical: 18)
+                      
                 ),
-              ),
-              leading: Radio<ValuesOption>(
-                value: ValuesOption.lostMoney,
-                groupValue: _optionSelected,
-                onChanged: (ValuesOption? value) {
-                  setState(() => _optionSelected = value);
+                showSelectedIcon: false,
+
+                segments: const [
+                  ButtonSegment<Options>(
+                    value: Options.addMoney,
+                    icon: Icon(Icons.add_outlined),
+                    label: Text('Entrada',style: TextStyle(
+                      fontSize: 16,
+                    ),),
+                  ),
+                  ButtonSegment<Options>(
+                    value: Options.lostMoney,
+                    icon: Icon(Icons.remove_outlined),
+                    label: Text('Saída',style: TextStyle(
+                      fontSize: 16,
+                    ),),
+                  ),
+                ],
+                selected: <Options>{optionsView},
+                onSelectionChanged: (Set<Options> newSelection) {
+                  setState(() {
+                    // By default there is only a single segment that can be
+                    // selected at one time, so its value is always the first
+                    // item in the selected set.
+                    optionsView = newSelection.first;
+                  });
                 },
               ),
             ),
@@ -146,10 +153,7 @@ class _ModalHomeValuesState extends State<ModalHomeValues> {
                       ElevatedButton.styleFrom(fixedSize: const Size(124, 24)),
                   child: const Text(
                     'Confirmar',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
                 ElevatedButton(

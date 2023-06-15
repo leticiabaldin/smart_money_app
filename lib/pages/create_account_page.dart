@@ -1,15 +1,99 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_money_app/assets/colors/colors_smart_money.dart';
 
 class CreateAccountPage extends StatefulWidget {
-  const CreateAccountPage({Key? key}) : super(key: key);
+  const CreateAccountPage({Key? key, this.next}) : super(key: key);
+  final String? next;
 
   @override
   State<CreateAccountPage> createState() => _CreateAccountPageState();
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool loading = false;
+  bool _isObscure = false;
+
+  Future<void> createAccount() async {
+    if (loading) return;
+
+    setState(() => loading = true);
+
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    final fireAuth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    String result;
+
+    try {
+      final credentials = await fireAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      await credentials.user!.updateDisplayName(name);
+      await firestore.doc('userProfile/${credentials.user!.uid}').set({
+        'name': name,
+        'email': email,
+      });
+
+      scaffoldMessenger.clearSnackBars();
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Seja Bem vindo(a), $name!'),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(milliseconds: 1500),
+        ),
+      );
+      goToFlow();
+    } catch (e) {
+      scaffoldMessenger.clearSnackBars();
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível criar a sua conta. Tente novamente.'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(milliseconds: 2500),
+          backgroundColor: AppColors.redApp,
+        ),
+      );
+    }
+
+    setState(() => loading = false);
+  }
+
+  void goToFlow() {
+    if (widget.next != null) {
+      context.go(widget.next!.replaceAll('%20F', '/'));
+    } else {
+      context.go('/homePage');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscure = true;
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +140,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ),
               ),
               const SizedBox(height: 32),
-              TextField(
+              TextFormField(
+                textInputAction: TextInputAction.next,
+                controller: nameController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: 'Nome Completo:',
                   labelStyle: const TextStyle(
@@ -94,7 +186,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              TextField(
+              TextFormField(
+                textInputAction: TextInputAction.next,
+                controller: emailController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: 'E-mail:',
                   labelStyle: const TextStyle(
@@ -132,7 +232,16 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              TextField(
+              TextFormField(
+                controller: passwordController,
+                textInputAction: TextInputAction.go,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                  return null;
+                },
+               obscureText: _isObscure,
                 decoration: InputDecoration(
                   labelText: 'Senha:',
                   labelStyle: const TextStyle(
@@ -140,9 +249,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     color: Colors.grey,
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.remove_red_eye_rounded),
-                    color: Colors.grey,
-                    onPressed: () {},
+                      icon: const Icon(Icons.remove_red_eye_rounded),
+                      color: Colors.grey,
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
@@ -173,13 +286,24 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     borderRadius: BorderRadius.circular(26),
                   ),
                 ),
+                onFieldSubmitted: (_) {
+                  if (formKey.currentState!.validate()) {
+                    createAccount();
+                  }
+                },
               ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.maxFinite,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: !loading
+                      ? () {
+                    if (formKey.currentState!.validate()) {
+                      createAccount();
+                    }
+                  }
+                      : null,
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
                       backgroundColor: AppColors.purpleApp),

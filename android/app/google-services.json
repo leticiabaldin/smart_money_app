@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "60203949294",
+    "project_id": "smartmoneyapp-ed126",
+    "storage_bucket": "smartmoneyapp-ed126.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60203949294:android:f13c5a066983e0638967ff",
+        "android_client_info": {
+          "package_name": "com.example.smart_money_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60203949294-m9ati5s9kqavhqell38pumdks8i3d27g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNP1qEEoc1XhyVKfd6O1aJJWZdxqK_khw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60203949294-m9ati5s9kqavhqell38pumdks8i3d27g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "60203949294-1o7081ari87no7j6teqs4pupf66fql8a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartMoneyApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

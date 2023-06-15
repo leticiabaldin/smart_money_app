@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>60203949294-1o7081ari87no7j6teqs4pupf66fql8a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.60203949294-1o7081ari87no7j6teqs4pupf66fql8a</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBWY5V4FLc6FraBsiUCeGDB-9w1Rkzh9yw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>60203949294</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.smartMoneyApp</string>
+	<key>PROJECT_ID</key>
+	<string>smartmoneyapp-ed126</string>
+	<key>STORAGE_BUCKET</key>
+	<string>smartmoneyapp-ed126.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:60203949294:ios:65fd64df252de1688967ff</string>
+</dict>
+</plist>
