@@ -13,11 +13,9 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-
-
-  final reference = FirebaseFirestore.instance.doc(
-    'userProfile/${FirebaseAuth.instance.currentUser!.uid}',
-  ); //conexão com a collections do banco de dados
+final reference = FirebaseFirestore.instance.doc(
+  'userProfile/${FirebaseAuth.instance.currentUser!.uid}',
+); //conexão com a collections do banco de dados
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
@@ -50,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
       scaffoldMessenger.clearSnackBars();
       scaffoldMessenger.showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text(
             'Bem vindo(a), ${credentials.user!.displayName}!',
             style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -101,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _isObscure = true;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -232,8 +231,9 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey,
                       ),
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.remove_red_eye_rounded),
-                        //_isObscure ?  Icon(Icons.remove_red_eye_rounded) : (Icon(Icons.remove_red_eye_outlined),),
+                        icon: _isObscure
+                            ? const Icon(Icons.remove_red_eye_rounded)
+                            : const Icon(Icons.remove_red_eye_outlined),
                         color: Colors.grey,
                         onPressed: () {
                           setState(() {

@@ -1,8 +1,15 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:smart_money_app/widgets/modal_home_values.dart';
+import 'package:smart_money_app/widgets/transaction_tile.dart';
 
 import '../assets/colors/colors_smart_money.dart';
+import '../entities/transaction.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,6 +19,79 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final fireAuth = FirebaseAuth.instance;
+  late final user = fireAuth.currentUser;
+  StreamSubscription? subscription;
+  bool loading = false;
+  List<MoneyTransaction> transactions = [];
+
+  double totalAddedMoney = 0;
+  double totalLostMoney = 0;
+  double actualMoney = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getTransactions();
+  }
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
+  }
+
+  getTransactions() {
+    setState(() => loading = true);
+    if (user == null) return;
+    final id = user!.uid;
+    final firestore = FirebaseFirestore.instance;
+    final collection = firestore.collection("transactions/$id/history").orderBy(
+          "date",
+          descending: true,
+        );
+    subscription = collection.snapshots().listen((event) {
+      if (event.size <= 0) {
+        setState(() {
+          this.transactions = [];
+          this.totalAddedMoney = 0;
+          this.totalLostMoney = 0;
+          this.actualMoney = 0;
+          loading = false;
+        });
+      }
+      final transactions = event.docs
+          .map((doc) => MoneyTransaction.fromMap(doc.data()))
+          .toList();
+
+      final totalAddedMoney = transactions.map((transaction) {
+        if (transaction.type == Options.lostMoney) return 0.0;
+        return transaction.value;
+      }).reduce((value, element) => value + element);
+
+      final totalLostMoney = transactions.map((transaction) {
+        if (transaction.type == Options.addMoney) return 0.0;
+        return transaction.value;
+      }).reduce((value, element) => value + element);
+
+      final actualMoney = totalAddedMoney - totalLostMoney;
+
+      setState(() {
+        this.transactions = transactions;
+        this.totalAddedMoney = totalAddedMoney;
+        this.totalLostMoney = totalLostMoney;
+        this.actualMoney = actualMoney;
+        loading = false;
+      });
+    }, onError: (_) {
+      setState(() => loading = false);
+    });
+  }
+
+  String convertValue(double value) {
+    final formatter = NumberFormat("0.00");
+    return formatter.format(value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +108,9 @@ class _HomePageState extends State<HomePage> {
                   AssetImage('lib/assets/images/female_avatar.png'),
             ),
           ),
-          title: const Text(
-            'Olá, Fulano da Silva!',
-            style: TextStyle(
+          title: Text(
+            'Olá, ${user?.displayName}!',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
             ),
@@ -44,9 +124,7 @@ class _HomePageState extends State<HomePage> {
                 size: 32,
               ),
             ),
-            const SizedBox(
-              width: 8,
-            ),
+            const SizedBox(width: 8),
             IconButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -77,15 +155,15 @@ class _HomePageState extends State<HomePage> {
                                   context.go('/');
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    //backgroundColor: AppColors.greyDarkApp,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 32,
-                                    ),),
+                                  //backgroundColor: AppColors.greyDarkApp,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 32,
+                                  ),
+                                ),
                                 child: const Text(
                                   'Confirmar',
                                   style: TextStyle(
-
                                     fontSize: 20,
                                   ),
                                 ),
@@ -176,21 +254,20 @@ class _HomePageState extends State<HomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
-                              'R\$5000,00',
-                              style: TextStyle(
+                              'R\$${convertValue(totalAddedMoney)}',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            Text(
-                              'Ganhos do mês',
+                            const Text(
+                              'Ganhos totais',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
-                                //fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -218,21 +295,20 @@ class _HomePageState extends State<HomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
-                              'R\$5000,00',
-                              style: TextStyle(
+                              'R\$${convertValue(totalLostMoney)}',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            Text(
-                              'Gastos do mês',
+                            const Text(
+                              'Gastos totais',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
-                                //fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -251,16 +327,12 @@ class _HomePageState extends State<HomePage> {
               children: [
                 const Text(
                   'Saldo atual:',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontSize: 18),
                 ),
-                const SizedBox(
-                  height: 6,
-                ),
-                const Text(
-                  'R\$2000,00',
-                  style: TextStyle(
+                const SizedBox(height: 6),
+                Text(
+                  'R\$${convertValue(actualMoney)}',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -282,190 +354,40 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          const Image(
-                            image:
-                                AssetImage('lib/assets/images/pig_image.png'),
-                            height: 54,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Registro de entrada',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                'R\$200,00',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
+            child: Builder(builder: (context) {
+              if (loading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (transactions.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Você tá liso',
+                        style: TextStyle(fontSize: 22),
                       ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          const Image(
-                            image:
-                                AssetImage('lib/assets/images/pig_image.png'),
-                            height: 54,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Registro de entrada',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                'R\$2250,00',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
+                      Expanded(
+                        child: Image.asset(
+                          "lib/assets/images/emptyState.png",
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          const Image(
-                            image:
-                                AssetImage('lib/assets/images/money_image.png'),
-                            height: 54,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Registro de saída',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                'R\$3000,00',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          const Image(
-                            image:
-                                AssetImage('lib/assets/images/money_image.png'),
-                            height: 54,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Registro de saída',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                'R\$400,00',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          const Image(
-                            image:
-                                AssetImage('lib/assets/images/pig_image.png'),
-                            height: 54,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Registro de entrada',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                'R\$200,00',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = transactions[index];
+                  return TransactionTile(transaction: transaction);
+                },
+              );
+            }),
           ),
           Container(
             alignment: Alignment.center,
@@ -481,9 +403,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   onPressed: () {
                     showDialog(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            const ModalHomeValues());
+                      context: context,
+                      builder: (BuildContext context) =>
+                          ModalHomeValues(money: actualMoney),
+                    );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

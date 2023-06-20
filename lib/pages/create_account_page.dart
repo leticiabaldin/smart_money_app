@@ -31,10 +31,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     final password = passwordController.text;
 
     final fireAuth = FirebaseAuth.instance;
-    final firestore = FirebaseFirestore.instance;
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-    String result;
 
     try {
       final credentials = await fireAuth.createUserWithEmailAndPassword(
@@ -43,10 +41,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       );
 
       await credentials.user!.updateDisplayName(name);
-      await firestore.doc('userProfile/${credentials.user!.uid}').set({
-        'name': name,
-        'email': email,
-      });
 
       scaffoldMessenger.clearSnackBars();
       scaffoldMessenger.showSnackBar(
@@ -103,231 +97,234 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             vertical: 72,
             horizontal: 24,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => context.go('/'),
-                    icon: const Icon(Icons.arrow_back_outlined, size: 32),
-                  ),
-                ],
-              ),
-              const Image(
-                image: AssetImage("lib/assets/images/login_page_image.png"),
-                height: 120,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Container(
-                alignment: Alignment.topLeft,
-                child: const Text(
-                  'Faça seu cadastro aqui!',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black87,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context.go('/'),
+                      icon: const Icon(Icons.arrow_back_outlined, size: 32),
+                    ),
+                  ],
+                ),
+                const Image(
+                  image: AssetImage("lib/assets/images/login_page_image.png"),
+                  height: 120,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  alignment: Alignment.topLeft,
+                  child: const Text(
+                    'Faça seu cadastro aqui!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-                alignment: Alignment.bottomLeft,
-                child: const Text(
-                  'Aproveite ao máximo o Smart Money.',
-                  style: TextStyle(fontSize: 15, color: Colors.black54),
-                ),
-              ),
-              const SizedBox(height: 32),
-              TextFormField(
-                textInputAction: TextInputAction.next,
-                controller: nameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'Nome Completo:',
-                  labelStyle: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                    borderRadius: BorderRadius.circular(26),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+                  alignment: Alignment.bottomLeft,
+                  child: const Text(
+                    'Aproveite ao máximo o Smart Money.',
+                    style: TextStyle(fontSize: 15, color: Colors.black54),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                textInputAction: TextInputAction.next,
-                controller: emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'E-mail:',
-                  labelStyle: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
+                const SizedBox(height: 32),
+                TextFormField(
+                  textInputAction: TextInputAction.next,
+                  controller: nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Campo obrigatório';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Nome Completo:',
+                    labelStyle: const TextStyle(
+                      fontSize: 18,
                       color: Colors.grey,
                     ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
                     ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
                     ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
                     ),
-                    borderRadius: BorderRadius.circular(26),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: passwordController,
-                textInputAction: TextInputAction.go,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  return null;
-                },
-               obscureText: _isObscure,
-                decoration: InputDecoration(
-                  labelText: 'Senha:',
-                  labelStyle: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey,
-                  ),
-                  suffixIcon: IconButton(
-                      icon: const Icon(Icons.remove_red_eye_rounded),
-                      color: Colors.grey,
-                      onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
-                      },
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
+                const SizedBox(height: 24),
+                TextFormField(
+                  textInputAction: TextInputAction.next,
+                  controller: emailController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Campo obrigatório';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'E-mail:',
+                    labelStyle: const TextStyle(
+                      fontSize: 18,
                       color: Colors.grey,
                     ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
                     ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
                     ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
                     ),
-                    borderRadius: BorderRadius.circular(26),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
+                    ),
                   ),
                 ),
-                onFieldSubmitted: (_) {
-                  if (formKey.currentState!.validate()) {
-                    createAccount();
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.maxFinite,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: !loading
-                      ? () {
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: passwordController,
+                  textInputAction: TextInputAction.go,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Campo obrigatório';
+                    }
+                    return null;
+                  },
+                 obscureText: _isObscure,
+                  decoration: InputDecoration(
+                    labelText: 'Senha:',
+                    labelStyle: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                    ),
+                    suffixIcon: IconButton(
+                        icon: const Icon(Icons.remove_red_eye_rounded),
+                        color: Colors.grey,
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                  ),
+                  onFieldSubmitted: (_) {
                     if (formKey.currentState!.validate()) {
                       createAccount();
                     }
-                  }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                      alignment: Alignment.center,
-                      backgroundColor: AppColors.purpleApp),
-                  child: const Text(
-                    'Criar Conta',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.maxFinite,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: !loading
+                        ? () {
+                      if (formKey.currentState!.validate()) {
+                        createAccount();
+                      }
+                    }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                        alignment: Alignment.center,
+                        backgroundColor: AppColors.purpleApp),
+                    child: const Text(
+                      'Criar Conta',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Image(
-                      image: AssetImage("lib/assets/images/credit_card.png"),
-                      height: 120),
-                ],
-              ),
-            ],
+                const SizedBox(
+                  height: 24,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Image(
+                        image: AssetImage("lib/assets/images/credit_card.png"),
+                        height: 120),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
